@@ -203,7 +203,7 @@ async function verifyDiscordRequest(request, publicKey) {
 		const key = await crypto.subtle.importKey(
 			"raw",
 			hexToUint8Array(publicKey),
-			{ name: "Ed25519", namedCurve: "Ed25519" },
+			{ name: "Ed25519" },
 			false,
 			["verify"]
 		);
