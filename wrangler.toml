@@ -6,11 +6,17 @@ compatibility_date = "2024-01-01"
 # Reference: https://developers.cloudflare.com/workers/configuration/compatibility-dates/#nodejs-compatibility-flag
 compatibility_flags = ["nodejs_compat"]
 
-[vars]
-# Non-sensitive config can go here
-# CARDS_JSON_URL = "https://your-domain.com/cards.json"
+[observability]
+enabled = false
+head_sampling_rate = 1
 
-# Secrets (set via `wrangler secret put`):
-# - DISCORD_PUBLIC_KEY
-# - DISCORD_APPLICATION_ID (optional, for command registration)
-# - DISCORD_BOT_TOKEN (optional, for command registration)
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = true
+invocation_logs = true
+
+[observability.traces]
+enabled = false
+persist = true
+head_sampling_rate = 1

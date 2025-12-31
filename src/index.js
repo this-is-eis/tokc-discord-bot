@@ -73,30 +73,32 @@ async function handleSearchCommand(interaction) {
 			card.name.toLowerCase().includes(query)
 		);
 
-		let embed;
+		let responseData;
 
 		if (matches.length === 0) {
 			// Case 1: No matches
-			embed = createErrorEmbed(
-				`No cards found matching "${searchQuery}".`
-			);
+			responseData = {
+				embeds: [
+					createErrorEmbed(
+						`No cards found matching "${searchQuery}".`
+					),
+				],
+			};
 		} else if (matches.length === 1) {
-			// Case 2: Single match
-			const card = matches[0];
-			embed = createSingleResultEmbed(card);
+			// Case 2: Single match - plain URL for auto-unfurl
+			responseData = createSingleResult(matches[0]);
 		} else {
-			// Case 3: Multiple matches
-			const firstCard = matches[0];
-			embed = createMultipleResultsEmbed(
+			// Case 3: Multiple matches - plain URLs for auto-unfurl
+			responseData = createMultipleResults(
 				searchQuery,
-				firstCard,
+				matches[0],
 				matches.length
 			);
 		}
 
 		return jsonResponse({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-			data: { embeds: [embed] },
+			data: responseData,
 		});
 	} catch (error) {
 		console.error("Error processing search:", error);
@@ -158,31 +160,22 @@ function createErrorEmbed(message) {
 	};
 }
 
-function createSingleResultEmbed(card) {
+function createSingleResult(card) {
 	const cardUrl = `${LIBRARY_BASE_URL}/card/${encodeURIComponent(card.id)}`;
-	return {
-		title: `📖 ${card.name}`,
-		description: `[View Card](${cardUrl})`,
-		url: cardUrl,
-		color: 0x5865f2, // Discord blurple
-	};
+	// Return plain URL - Discord will auto-unfurl with OG preview
+	return { content: cardUrl };
 }
 
-function createMultipleResultsEmbed(query, firstCard, totalCount) {
+function createMultipleResults(query, firstCard, totalCount) {
 	const searchUrl = `${LIBRARY_BASE_URL}/search?q=${encodeURIComponent(
 		query
 	)}`;
 	const cardUrl = `${LIBRARY_BASE_URL}/card/${encodeURIComponent(
 		firstCard.id
 	)}`;
+	// Plain URLs for auto-unfurl; first card URL will show preview
 	return {
-		title: `🔍 Found ${totalCount} cards`,
-		description: [
-			`**[View all results](${searchUrl})**`,
-			"",
-			`**First match:** [${firstCard.name}](${cardUrl})`,
-		].join("\n"),
-		color: 0x57f287, // Green
+		content: `Found ${totalCount} cards. [View all results](<${searchUrl}>)\n${cardUrl}`,
 	};
 }
 
