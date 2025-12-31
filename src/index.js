@@ -23,8 +23,9 @@ export default {
 			return new Response("Method not allowed", { status: 405 });
 		}
 
-		// Verify Discord request signature
-		// Reference: https://discord.com/developers/docs/interactions/overview#setting-up-an-endpoint
+		console.log("Public key exists:", !!env.DISCORD_PUBLIC_KEY);
+		console.log("Public key length:", env.DISCORD_PUBLIC_KEY?.length);
+
 		const isValid = await verifyDiscordRequest(
 			request,
 			env.DISCORD_PUBLIC_KEY
