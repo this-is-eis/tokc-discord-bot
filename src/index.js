@@ -23,9 +23,6 @@ export default {
 			return new Response("Method not allowed", { status: 405 });
 		}
 
-		console.log("Public key exists:", !!env.DISCORD_PUBLIC_KEY);
-		console.log("Public key length:", env.DISCORD_PUBLIC_KEY?.length);
-
 		const isValid = await verifyDiscordRequest(
 			request,
 			env.DISCORD_PUBLIC_KEY
