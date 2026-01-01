@@ -180,7 +180,7 @@ function createMultipleResults(query, firstCard, totalCount) {
 	)}`;
 	// Plain URLs for auto-unfurl; first card URL will show preview
 	return {
-		content: `Found ${totalCount} cards. [View all results](<${searchUrl}>)\n${cardUrl}`,
+		content: `Found ${totalCount} cards. [View all results](<${searchUrl}>)\nFirst match: ${cardUrl}`,
 	};
 }
 
