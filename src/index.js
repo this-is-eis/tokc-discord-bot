@@ -1,3 +1,5 @@
+import { env } from "cloudflare:workers";
+
 // Discord interaction types and response types
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding
 const InteractionType = {
@@ -10,23 +12,23 @@ const InteractionResponseType = {
 	CHANNEL_MESSAGE_WITH_SOURCE: 4,
 };
 
-// Your external cards.json URL
-const CARDS_JSON_URL = "https://cards.eerieidolgames.com//cards.json";
-const LIBRARY_BASE_URL = "https://library.eerieidolgames.com";
+// Discord message flags
+// Reference: https://discord.com/developers/docs/resources/message#message-object-message-flags
+const MessageFlags = {
+	EPHEMERAL: 64,
+};
 
-// Cache configuration
+const { CARDS_JSON_URL, DISCORD_PUBLIC_KEY, LIBRARY_BASE_URL } = env;
+
 const CACHE_TTL_SECONDS = 3600; // 60 minutes
 
 export default {
-	async fetch(request, env) {
+	async fetch(request) {
 		if (request.method !== "POST") {
 			return new Response("Method not allowed", { status: 405 });
 		}
 
-		const isValid = await verifyDiscordRequest(
-			request,
-			env.DISCORD_PUBLIC_KEY
-		);
+		const isValid = await verifyDiscordRequest(request, DISCORD_PUBLIC_KEY);
 		if (!isValid) {
 			return new Response("Invalid request signature", { status: 401 });
 		}
@@ -48,7 +50,7 @@ export default {
 };
 
 async function handleSearchCommand(interaction) {
-	const { name, options } = interaction.data;
+	const { options } = interaction.data;
 
 	// Extract the 'name' parameter from the command
 	const nameOption = options?.find((opt) => opt.name === "name");
@@ -64,7 +66,6 @@ async function handleSearchCommand(interaction) {
 	}
 
 	try {
-		// Fetch cards data with caching
 		const cards = await fetchCardsWithCache();
 
 		// Case-insensitive partial match
@@ -76,24 +77,27 @@ async function handleSearchCommand(interaction) {
 		let responseData;
 
 		if (matches.length === 0) {
-			// Case 1: No matches
+			// Case 1: No matches - ephemeral
 			responseData = {
 				embeds: [
 					createErrorEmbed(
 						`No cards found matching "${searchQuery}".`
 					),
 				],
+				flags: MessageFlags.EPHEMERAL,
 			};
 		} else if (matches.length === 1) {
-			// Case 2: Single match - plain URL for auto-unfurl
+			// Case 2: Single match - plain URL for auto-unfurl (public)
 			responseData = createSingleResult(matches[0]);
 		} else {
-			// Case 3: Multiple matches - plain URLs for auto-unfurl
-			responseData = createMultipleResults(
-				searchQuery,
-				matches[0],
-				matches.length
-			);
+			// Case 3: Multiple matches - plain URLs for auto-unfurl (public)
+			responseData = {
+				...createMultipleResults(
+					searchQuery,
+					matches[0],
+					matches.length
+				),
+			};
 		}
 
 		return jsonResponse({
@@ -110,6 +114,7 @@ async function handleSearchCommand(interaction) {
 						"An error occurred while searching. Please try again later."
 					),
 				],
+				flags: MessageFlags.EPHEMERAL,
 			},
 		});
 	}
