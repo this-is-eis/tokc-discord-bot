@@ -182,10 +182,9 @@ function createSingleResultEmbed(card) {
 			: [card.seasonrules];
 		console.log(`items: ${items}`);
 		for (const it of items) {
-			const spec = String(it?.season ?? "").trim();
-			const [rawName, rawLines] = spec.split(",").map((s) => s.trim());
-			const label = `[${rawName.toUpperCase()}]`;
-			const rules = String(it?.rules ?? "").trim();
+			console.log(`it: ${it}`);
+			const label = `[${it.season.toUpperCase()}]`;
+			const rules = it.rules;
 			cardText.concat(`\n${label}: ${rules}`);
 		}
 	}
