@@ -183,8 +183,12 @@ function createSingleResultEmbed(card) {
 		console.log(`items: ${JSON.stringify(items)}`);
 		for (const it of items) {
 			console.log(`it: ${JSON.stringify(it)}`);
-			const label = `[${it.season.toUpperCase()}]`;
-			const rules = it.rules;
+			console.log(`season: ${JSON.stringify(it.season)}`);
+			console.log(`rules: ${JSON.stringify(it.rules)}`);
+			console.log(`season: ${JSON.stringify(it["season"])}`);
+			console.log(`rules: ${JSON.stringify(it["rules"])}`);
+			const label = `[${it["season"].toUpperCase()}]`;
+			const rules = it["rules"];
 			cardText.concat(`\n${label}: ${rules}`);
 		}
 	}
