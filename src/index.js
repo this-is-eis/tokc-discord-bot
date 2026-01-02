@@ -91,6 +91,7 @@ async function handleSearchCommand(interaction) {
 		} else if (matches.length === 1) {
 			// Case 2: Single match - plain URL for auto-unfurl (public)
 			responseData = createSingleResultEmbed(matches[0]);
+			console.log(responseData);
 		} else {
 			// Case 3: Multiple matches - plain URLs for auto-unfurl (public)
 			responseData = {
@@ -173,10 +174,13 @@ function createSingleResultEmbed(card) {
 
 	let cardText = card.text ?? "";
 	// Normalize Season Rules
-	if (card.seasonrules) {
+	console.log(card.seasonrules);
+	if (card.seasonrules != undefined) {
+		console.log(card.seasonrules);
 		const items = Array.isArray(card.seasonrules)
 			? card.seasonrules
 			: [card.seasonrules];
+		console.log(items);
 		for (const it of items) {
 			const spec = String(it?.season ?? "").trim();
 			if (!spec) continue;
@@ -194,13 +198,17 @@ function createSingleResultEmbed(card) {
 	console.log(cardText);
 
 	return {
-		title: card.name,
-		description: formatMetaDescription(cardText),
-		url: cardUrl,
-		color: 0x5865f2, // Discord blurple
-		image: {
-			url: card.image,
-		},
+		embeds: [
+			{
+				title: card.name,
+				description: formatMetaDescription(cardText),
+				url: cardUrl,
+				color: 0x5865f2, // Discord blurple
+				image: {
+					url: card.image,
+				},
+			},
+		],
 	};
 }
 
