@@ -168,11 +168,34 @@ function createErrorEmbed(message) {
 }
 
 function createSingleResultEmbed(card) {
-	console.log(card);
 	const cardUrl = `${LIBRARY_BASE_URL}/card/${encodeURIComponent(card.id)}`;
+	console.log(card);
+
+	let cardText = card.text ?? "";
+	// Normalize Season Rules
+	if (card.seasonrules.length > 0) {
+		const items = Array.isArray(card.seasonrules)
+			? card.seasonrules
+			: [card.seasonrules];
+		for (const it of items) {
+			const spec = String(it?.season ?? "").trim();
+			if (!spec) continue;
+			const [rawName, rawLines] = spec.split(",").map((s) => s.trim());
+			const label = `[${rawName.toUpperCase()}]`;
+			const rules = String(it?.rules ?? "").trim();
+			cardText.append(`\n${label}: ${rules}`);
+		}
+	}
+	if (card.text2) {
+		cardText.append(`\n${card.text2}`);
+	}
+
+	cardText = cardText.trim();
+	console.log(cardText);
+
 	return {
 		title: card.name,
-		description: formatMetaDescription(card.text),
+		description: formatMetaDescription(cardText),
 		url: cardUrl,
 		color: 0x5865f2, // Discord blurple
 		image: {
