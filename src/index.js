@@ -154,9 +154,7 @@ async function fetchCardsWithCache() {
 		console.log("Cache hit");
 	}
 
-	console.log(decompress(response.json()));
-
-	return decompress(response.json());
+	return decompress(await response.json());
 }
 
 // Embed builders
