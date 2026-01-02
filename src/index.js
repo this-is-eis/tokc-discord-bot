@@ -1,3 +1,4 @@
+import { decompress } from "compress-json";
 import { env } from "cloudflare:workers";
 import { formatMetaDescription } from "./helper";
 
@@ -153,7 +154,9 @@ async function fetchCardsWithCache() {
 		console.log("Cache hit");
 	}
 
-	return response.json();
+	console.log(decompress(response.json()));
+
+	return decompress(response.json());
 }
 
 // Embed builders

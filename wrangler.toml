@@ -8,7 +8,7 @@ keep_vars = true
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-CARDS_JSON_URL = "https://cards.eerieidolgames.com/cards.json"
+CARDS_JSON_URL = "https://cards.eerieidolgames.com/cards.min.json"
 LIBRARY_BASE_URL = "https://library.eerieidolgames.com"
 
 [observability]
