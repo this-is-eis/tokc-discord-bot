@@ -167,6 +167,7 @@ function createErrorEmbed(message) {
 }
 
 function createSingleResultEmbed(card) {
+	console.log(card);
 	const cardUrl = `${LIBRARY_BASE_URL}/card/${encodeURIComponent(card.id)}`;
 	return {
 		title: card.name,
