@@ -22,7 +22,7 @@ const MessageFlags = {
 
 const { CARDS_JSON_URL, DISCORD_PUBLIC_KEY, LIBRARY_BASE_URL } = env;
 
-const CACHE_TTL_SECONDS = 3600; // 60 minutes
+const CACHE_TTL_SECONDS = 60; // 60 minutes
 
 export default {
 	async fetch(request) {
