@@ -173,7 +173,7 @@ function createSingleResultEmbed(card) {
 
 	let cardText = card.text ?? "";
 	// Normalize Season Rules
-	if (card.seasonrules.length > 0) {
+	if (card.seasonrules) {
 		const items = Array.isArray(card.seasonrules)
 			? card.seasonrules
 			: [card.seasonrules];
