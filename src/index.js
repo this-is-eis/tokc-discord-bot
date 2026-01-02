@@ -183,11 +183,11 @@ function createSingleResultEmbed(card) {
 			const [rawName, rawLines] = spec.split(",").map((s) => s.trim());
 			const label = `[${rawName.toUpperCase()}]`;
 			const rules = String(it?.rules ?? "").trim();
-			cardText.append(`\n${label}: ${rules}`);
+			cardText.concat(`\n${label}: ${rules}`);
 		}
 	}
 	if (card.text2) {
-		cardText.append(`\n${card.text2}`);
+		cardText.concat(`\n${card.text2}`);
 	}
 
 	cardText = cardText.trim();
