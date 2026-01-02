@@ -176,14 +176,13 @@ function createSingleResultEmbed(card) {
 	// Normalize Season Rules
 	console.log(card.seasonrules);
 	if (card.seasonrules != undefined) {
-		console.log(card.seasonrules);
+		console.log(`seasonrules: ${card.seasonrules}`);
 		const items = Array.isArray(card.seasonrules)
 			? card.seasonrules
 			: [card.seasonrules];
-		console.log(items);
+		console.log(`items: ${items}`);
 		for (const it of items) {
 			const spec = String(it?.season ?? "").trim();
-			if (!spec) continue;
 			const [rawName, rawLines] = spec.split(",").map((s) => s.trim());
 			const label = `[${rawName.toUpperCase()}]`;
 			const rules = String(it?.rules ?? "").trim();
