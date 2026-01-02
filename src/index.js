@@ -170,7 +170,7 @@ function createSingleResultEmbed(card) {
 	const cardUrl = `${LIBRARY_BASE_URL}/card/${encodeURIComponent(card.id)}`;
 	return {
 		title: card.name,
-		description: `${formatMetaDescription(card.text)}`,
+		description: formatMetaDescription(card.text),
 		url: cardUrl,
 		color: 0x5865f2, // Discord blurple
 		image: {
