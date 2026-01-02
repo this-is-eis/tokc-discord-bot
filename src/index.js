@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { formatMetaDescription } from "./helper";
 
 // Discord interaction types and response types
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding
@@ -88,7 +89,7 @@ async function handleSearchCommand(interaction) {
 			};
 		} else if (matches.length === 1) {
 			// Case 2: Single match - plain URL for auto-unfurl (public)
-			responseData = createSingleResult(matches[0]);
+			responseData = createSingleResultEmbed(matches[0]);
 		} else {
 			// Case 3: Multiple matches - plain URLs for auto-unfurl (public)
 			responseData = {
@@ -165,10 +166,17 @@ function createErrorEmbed(message) {
 	};
 }
 
-function createSingleResult(card) {
+function createSingleResultEmbed(card) {
 	const cardUrl = `${LIBRARY_BASE_URL}/card/${encodeURIComponent(card.id)}`;
-	// Return plain URL - Discord will auto-unfurl with OG preview
-	return { content: cardUrl };
+	return {
+		title: card.name,
+		description: `${formatMetaDescription(card.text)}`,
+		url: cardUrl,
+		color: 0x5865f2, // Discord blurple
+		image: {
+			url: card.image,
+		},
+	};
 }
 
 function createMultipleResults(query, firstCard, totalCount) {
