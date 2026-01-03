@@ -121,7 +121,7 @@ async function handleSearchCommand(interaction) {
 		);
 		if (tagOption) {
 			let tags = [];
-			tagOption.forEach((opt) => tags.append(opt.value));
+			tagOption.forEach((opt) => tags.push(opt.value));
 
 			if (matches) {
 				matches = matches.filter((card) =>
