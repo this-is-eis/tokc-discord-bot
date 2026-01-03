@@ -23,7 +23,7 @@ function createSingleResultEmbed(card) {
 	const keys = Object.keys(card);
 	for (const k of keys) {
 		if (/^text(\d+)?$/i.test(k)) {
-			cardText += `\n${card[k]}`;
+			cardText += `\n\n${card[k]}`;
 		} else if (k === "seasonrules") {
 			cardText += normalizeSeasonRules(card[k]);
 		} else if (k === "flavour") {
@@ -65,7 +65,7 @@ function matchColorFromTags(tags) {
 }
 
 function normalizeSeasonRules(seasonrules) {
-	let text = "";
+	let text = "\n";
 	const items = Array.isArray(seasonrules) ? seasonrules : [seasonrules];
 
 	for (const it of items) {
