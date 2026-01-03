@@ -111,6 +111,7 @@ async function handleSearchCommand(interaction) {
 			};
 			console.log(`responseData: ${JSON.stringify(responseData)}`);
 		}
+		console.log(`responseData: ${JSON.stringify(responseData)}`);
 
 		console.log(
 			`jsonresponse: ${JSON.stringify(
@@ -118,6 +119,21 @@ async function handleSearchCommand(interaction) {
 					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 					data: responseData,
 				})
+			)}`
+		);
+
+		console.log(
+			`response: ${JSON.stringify(
+				new Response(
+					JSON.stringify({
+						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+						data: responseData,
+					}),
+					{
+						status: 200,
+						headers: { "Content-Type": "application/json" },
+					}
+				)
 			)}`
 		);
 
