@@ -128,11 +128,11 @@ async function handleSearchCommand(interaction) {
 
 			if (matches) {
 				matches = matches.filter((card) =>
-					tags.every((v) => card.includes(v))
+					tags.every((v) => card.tags.includes(v))
 				);
 			} else {
 				matches = cards.filter((card) =>
-					tags.every((v) => card.includes(v))
+					tags.every((v) => card.tags.includes(v))
 				);
 			}
 		}
