@@ -23,11 +23,11 @@ function createSingleResultEmbed(card) {
 	const keys = Object.keys(card);
 	for (const k of keys) {
 		if (/^text(\d+)?$/i.test(k)) {
-			cardText += `\n${card.k}`;
+			cardText += `\n${card["k"]}`;
 		} else if (k === "seasonrules") {
-			cardText += normalizeSeasonRules(card.k);
+			cardText += normalizeSeasonRules(card["k"]);
 		} else if (k === "flavour") {
-			cardText += `\n\n*${card.k}*`;
+			cardText += `\n\n*${card["k"]}*`;
 		}
 	}
 

@@ -96,7 +96,7 @@ async function handleSearchCommand(interaction) {
 		} else if (matches.length === 1) {
 			// Case 2: Single match
 			responseData = { embeds: [createSingleResultEmbed(matches[0])] };
-			console.log(responseData);
+			console.log(`responseData: ${responseData}`);
 		} else {
 			// Case 3: Multiple matches
 			responseData = {
@@ -109,6 +109,7 @@ async function handleSearchCommand(interaction) {
 					createSingleResultEmbed(matches[0]),
 				],
 			};
+			console.log(`responseData: ${responseData}`);
 		}
 
 		return jsonResponse({
