@@ -61,8 +61,6 @@ function matchColorFromTags(tags) {
 		tags.some((t) => t.includes(key))
 	);
 
-	console.log(`tagColorMatch: ${tagColorMatch}`);
-
 	return tagColorMatch ? TagColors[tagColorMatch] : DefaultColor;
 }
 
