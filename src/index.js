@@ -27,7 +27,7 @@ const MessageFlags = {
 
 const { CARDS_JSON_URL, DISCORD_PUBLIC_KEY } = env;
 
-const CACHE_TTL_SECONDS = 60; // 60 minutes
+const CACHE_TTL_SECONDS = 3600; // 60 minutes
 
 export default {
 	async fetch(request) {
@@ -58,9 +58,24 @@ export default {
 
 async function handleSearchCommand(interaction) {
 	const { options } = interaction.data;
+	console.log("🚀 ~ handleSearchCommand ~ options:", JSON.stringify(options));
+	let nameOption;
+
+	simpleSearch = options?.find((opt) => opt.name === "simple");
+	advancedSearch = options?.find((opt) => opt.name === "advanced");
+
+	if (simpleSearch) {
+		nameOption = simpleSearch.value.options?.find(
+			(opt) => opt.name === "name"
+		);
+	} else if (advancedSearch) {
+		nameOption = advancedSearch.value.options?.find(
+			(opt) => opt.name === "name"
+		);
+	}
+	console.log("🚀 ~ handleSearchCommand ~ nameOption:", nameOption);
 
 	// Extract the 'name' parameter from the command
-	const nameOption = options?.find((opt) => opt.name === "name");
 	const searchQuery = nameOption?.value?.trim();
 
 	if (!searchQuery) {
