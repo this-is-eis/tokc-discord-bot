@@ -182,22 +182,17 @@ function createSingleResultEmbed(card) {
 			: [card.seasonrules];
 		console.log(`items: ${JSON.stringify(items)}`);
 		for (const it of items) {
-			console.log(`it: ${JSON.stringify(it)}`);
-			console.log(`season: ${JSON.stringify(it.season)}`);
-			console.log(`rules: ${JSON.stringify(it.rules)}`);
-			console.log(`season: ${JSON.stringify(it["season"])}`);
-			console.log(`rules: ${JSON.stringify(it["rules"])}`);
-			const label = `[${it["season"].toUpperCase()}]`;
-			const rules = it["rules"];
-			cardText.concat(`\n${label}: ${rules}`);
+			const label = `[${it.season.toUpperCase()}]`;
+			const rules = it.rules.trim();
+			cardText += `\n${label}: ${rules}`;
 		}
 	}
 	if (card.text2) {
-		cardText.concat(`\n${card.text2}`);
+		cardText += `\n${card.text2}`;
 	}
 
 	cardText = cardText.trim();
-	console.log(cardText);
+	console.log(`cardText: ${cardText}`);
 
 	return {
 		embeds: [
