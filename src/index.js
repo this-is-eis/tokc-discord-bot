@@ -60,6 +60,8 @@ async function handleSearchCommand(interaction) {
 	const { options } = interaction.data;
 	console.log("🚀 ~ handleSearchCommand ~ options:", JSON.stringify(options));
 	let nameOption;
+	let strengthOption;
+	let tagOption;
 
 	const simpleSearch = options?.find((opt) => opt.name === "simple");
 	const advancedSearch = options?.find((opt) => opt.name === "advanced");
@@ -69,13 +71,19 @@ async function handleSearchCommand(interaction) {
 		nameOption = simpleSearch.options?.find((opt) => opt.name === "name");
 	} else if (advancedSearch) {
 		nameOption = advancedSearch.options?.find((opt) => opt.name === "name");
+		strengthOption = advancedSearch.options?.find(
+			(opt) => opt.name === "strength"
+		);
+		tagOption = advancedSearch.options?.filter(
+			(opt) => opt.name !== "name" && opt.name !== "strength"
+		);
 	}
 	console.log("🚀 ~ handleSearchCommand ~ nameOption:", nameOption);
 
 	// Extract the 'name' parameter from the command
 	const searchQuery = nameOption?.value?.trim();
 
-	if (!searchQuery) {
+	if (!nameOption && !strengthOption && !tagOption) {
 		return jsonResponse({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
 			data: {
@@ -89,9 +97,43 @@ async function handleSearchCommand(interaction) {
 
 		// Case-insensitive partial match
 		const query = searchQuery.toLowerCase();
-		const matches = cards.filter((card) =>
-			card.name.toLowerCase().includes(query)
+		let matches;
+		if (nameOption) {
+			matches = cards.filter((card) =>
+				card.name.toLowerCase().includes(query)
+			);
+		}
+		console.log("🚀 ~ handleSearchCommand ~ matches after name:", matches);
+		if (strengthOption) {
+			if (matches) {
+				matches = matches.filter(
+					(card) => card.meta.strength === strengthOption.value
+				);
+			} else {
+				matches = cards.filter(
+					(card) => card.meta.strength === strengthOption.value
+				);
+			}
+		}
+		console.log(
+			"🚀 ~ handleSearchCommand ~ matches after strength:",
+			matches
 		);
+		if (tagOption) {
+			let tags = [];
+			tagOption.forEach((opt) => tags.append(opt.value));
+
+			if (matches) {
+				matches = matches.filter((card) =>
+					tags.every((v) => card.includes(v))
+				);
+			} else {
+				matches = cards.filter((card) =>
+					tags.every((v) => card.includes(v))
+				);
+			}
+		}
+		console.log("🚀 ~ handleSearchCommand ~ matches after tag:", matches);
 
 		let responseData;
 
@@ -108,7 +150,6 @@ async function handleSearchCommand(interaction) {
 		} else if (matches.length === 1) {
 			// Case 2: Single match
 			responseData = { embeds: [createSingleResultEmbed(matches[0])] };
-			console.log(`responseData: ${JSON.stringify(responseData)}`);
 		} else {
 			// Case 3: Multiple matches
 			responseData = {
@@ -121,33 +162,8 @@ async function handleSearchCommand(interaction) {
 					createSingleResultEmbed(matches[0]),
 				],
 			};
-			console.log(`responseData: ${JSON.stringify(responseData)}`);
 		}
 		console.log(`responseData: ${JSON.stringify(responseData)}`);
-
-		console.log(
-			`jsonresponse: ${JSON.stringify(
-				jsonResponse({
-					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-					data: responseData,
-				})
-			)}`
-		);
-
-		console.log(
-			`response: ${JSON.stringify(
-				new Response(
-					JSON.stringify({
-						type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-						data: responseData,
-					}),
-					{
-						status: 200,
-						headers: { "Content-Type": "application/json" },
-					}
-				)
-			)}`
-		);
 
 		return jsonResponse({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
