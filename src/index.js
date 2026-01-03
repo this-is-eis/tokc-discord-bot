@@ -79,6 +79,8 @@ async function handleSearchCommand(interaction) {
 		);
 	}
 	console.log("🚀 ~ handleSearchCommand ~ nameOption:", nameOption);
+	console.log("🚀 ~ handleSearchCommand ~ strengthOption:", strengthOption);
+	console.log("🚀 ~ handleSearchCommand ~ tagOption:", tagOption);
 
 	// Extract the 'name' parameter from the command
 	const searchQuery = nameOption?.value?.trim();
@@ -99,6 +101,7 @@ async function handleSearchCommand(interaction) {
 		const query = searchQuery.toLowerCase();
 		let matches;
 		if (nameOption) {
+			console.log("inside name option");
 			matches = cards.filter((card) =>
 				card.name.toLowerCase().includes(query)
 			);
