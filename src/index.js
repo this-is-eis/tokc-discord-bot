@@ -49,7 +49,7 @@ export default {
 
 		// Handle slash command
 		if (interaction.type === InteractionType.APPLICATION_COMMAND) {
-			return handleSearchCommand(interaction);
+			return await handleSearchCommand(interaction);
 		}
 
 		return new Response("Unknown interaction type", { status: 400 });
@@ -111,6 +111,15 @@ async function handleSearchCommand(interaction) {
 			};
 			console.log(`responseData: ${JSON.stringify(responseData)}`);
 		}
+
+		console.log(
+			`jsonresponse: ${JSON.stringify(
+				jsonResponse({
+					type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+					data: responseData,
+				})
+			)}`
+		);
 
 		return jsonResponse({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
