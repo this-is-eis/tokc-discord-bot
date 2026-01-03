@@ -22,7 +22,7 @@
   */
 export function formatMetaDescription(text) {
 	//   Remove all occurences of {{}}. e.g. {{b2}}
-	text = text.replace(/\{\{([^}]+)\}\}/g, "");
+	text = text.replace(/\{\{([^}]+)\}\}/g, "**");
 
 	//   Remove all occurences of <>. e.g. <i>
 	text = text.replace(/<([^>]+)>/g, "");
@@ -40,7 +40,7 @@ export function formatMetaDescription(text) {
 
 	// Change Votes and Lore symbols into numbers.
 	// e.g. Lore: [p][p] => Lore: 2
-	text = text.replace(/^(Votes|Lore):.*$/gm, (line) => {
+	text = text.replace(/^(Votes|Lore|Fog Placed):.*$/gm, (line) => {
 		// Count all square bracket pairs
 		const brackets = line.match(/\[[^\]]*\]/g);
 		const count = brackets ? brackets.length : 0;

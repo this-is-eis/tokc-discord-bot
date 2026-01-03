@@ -1,6 +1,11 @@
-import { decompress } from "compress-json";
+import {
+	createErrorEmbed,
+	createMultipleResultsEmbed,
+	createSingleResultEmbed,
+} from "./response-builder";
+
 import { env } from "cloudflare:workers";
-import { formatMetaDescription } from "./helper";
+import verifyDiscordRequest from "./discord-request-verification";
 
 // Discord interaction types and response types
 // Reference: https://discord.com/developers/docs/interactions/receiving-and-responding
@@ -20,7 +25,7 @@ const MessageFlags = {
 	EPHEMERAL: 64,
 };
 
-const { CARDS_JSON_URL, DISCORD_PUBLIC_KEY, LIBRARY_BASE_URL } = env;
+const { CARDS_JSON_URL, DISCORD_PUBLIC_KEY } = env;
 
 const CACHE_TTL_SECONDS = 60; // 60 minutes
 
@@ -89,17 +94,20 @@ async function handleSearchCommand(interaction) {
 				flags: MessageFlags.EPHEMERAL,
 			};
 		} else if (matches.length === 1) {
-			// Case 2: Single match - plain URL for auto-unfurl (public)
-			responseData = createSingleResultEmbed(matches[0]);
+			// Case 2: Single match
+			responseData = { embeds: [createSingleResultEmbed(matches[0])] };
 			console.log(responseData);
 		} else {
-			// Case 3: Multiple matches - plain URLs for auto-unfurl (public)
+			// Case 3: Multiple matches
 			responseData = {
-				...createMultipleResults(
-					searchQuery,
-					matches[0],
-					matches.length
-				),
+				embeds: [
+					createMultipleResultsEmbed(
+						searchQuery,
+						matches[0],
+						matches.length
+					),
+					createSingleResultEmbed(matches[0]),
+				],
 			};
 		}
 
@@ -155,106 +163,7 @@ async function fetchCardsWithCache() {
 		console.log("Cache hit");
 	}
 
-	return decompress(await response.json());
-}
-
-// Embed builders
-// Reference: https://discord.com/developers/docs/resources/message#embed-object
-function createErrorEmbed(message) {
-	return {
-		title: "❌ Search Error",
-		description: message,
-		color: 0xff4444, // Red
-	};
-}
-
-function createSingleResultEmbed(card) {
-	const cardUrl = `${LIBRARY_BASE_URL}/card/${encodeURIComponent(card.id)}`;
-	console.log(card);
-
-	let cardText = card.text ?? "";
-	// Normalize Season Rules
-	console.log(card.seasonrules);
-	if (card.seasonrules != undefined) {
-		console.log(`seasonrules: ${JSON.stringify(card.seasonrules)}`);
-		const items = Array.isArray(card.seasonrules)
-			? card.seasonrules
-			: [card.seasonrules];
-		console.log(`items: ${JSON.stringify(items)}`);
-		for (const it of items) {
-			const label = `[${it.season.toUpperCase()}]`;
-			const rules = it.rules.trim();
-			cardText += `\n${label}: ${rules}`;
-		}
-	}
-	if (card.text2) {
-		cardText += `\n${card.text2}`;
-	}
-
-	cardText = cardText.trim();
-	console.log(`cardText: ${cardText}`);
-
-	return {
-		embeds: [
-			{
-				title: card.name,
-				description: formatMetaDescription(cardText),
-				url: cardUrl,
-				color: 0x5865f2, // Discord blurple
-				image: {
-					url: card.image,
-				},
-			},
-		],
-	};
-}
-
-function createMultipleResults(query, firstCard, totalCount) {
-	const searchUrl = `${LIBRARY_BASE_URL}/search?q=${encodeURIComponent(
-		query
-	)}`;
-	const cardUrl = `${LIBRARY_BASE_URL}/card/${encodeURIComponent(
-		firstCard.id
-	)}`;
-	// Plain URLs for auto-unfurl; first card URL will show preview
-	return {
-		content: `Found ${totalCount} cards. [View all results](<${searchUrl}>)\nFirst match: ${cardUrl}`,
-	};
-}
-
-// Discord signature verification using Web Crypto API
-// Reference: https://discord.com/developers/docs/interactions/overview#setting-up-an-endpoint-validating-security-request-headers
-async function verifyDiscordRequest(request, publicKey) {
-	const signature = request.headers.get("X-Signature-Ed25519");
-	const timestamp = request.headers.get("X-Signature-Timestamp");
-	const body = await request.clone().text();
-
-	if (!signature || !timestamp) {
-		return false;
-	}
-
-	try {
-		const key = await crypto.subtle.importKey(
-			"raw",
-			hexToUint8Array(publicKey),
-			{ name: "Ed25519" },
-			false,
-			["verify"]
-		);
-
-		const message = new TextEncoder().encode(timestamp + body);
-		const sig = hexToUint8Array(signature);
-
-		return await crypto.subtle.verify("Ed25519", key, sig, message);
-	} catch (err) {
-		console.error("Signature verification failed:", err);
-		return false;
-	}
-}
-
-function hexToUint8Array(hex) {
-	const pairs = hex.match(/[\dA-Fa-f]{2}/g) || [];
-	return new Uint8Array(pairs.map((b) => parseInt(b, 16)));
+	return response.json();
 }
 
 function jsonResponse(data, status = 200) {

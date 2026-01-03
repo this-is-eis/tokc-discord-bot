@@ -16,8 +16,5 @@
 	"bugs": {
 		"url": "https://github.com/this-is-eis/tokc-discord-bot/issues"
 	},
-	"homepage": "https://github.com/this-is-eis/tokc-discord-bot#readme",
-	"dependencies": {
-		"compress-json": "^2.1.2"
-	}
+	"homepage": "https://github.com/this-is-eis/tokc-discord-bot#readme"
 }
