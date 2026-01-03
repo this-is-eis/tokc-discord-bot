@@ -46,13 +46,13 @@ function createSingleResultEmbed(card) {
 }
 
 const TagColors = {
-	Clans: "0x007f7d",
-	Uprising: "0x840c21",
-	Nobility: "0x1a509b",
-	Gathering: "0x6e1878",
-	Aeronauts: "0x41abc2",
-	Simulacrum: "0x2b2e35",
-	"Whispering Tower": "0x4a32a4",
+	Clans: 0x007f7d,
+	Uprising: 0x840c21,
+	Nobility: 0x1a509b,
+	Gathering: 0x6e1878,
+	Aeronauts: 0x41abc2,
+	Simulacrum: 0x2b2e35,
+	"Whispering Tower": 0x4a32a4,
 };
 const DefaultColor = 0x1a292e;
 
