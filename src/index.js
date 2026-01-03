@@ -64,14 +64,11 @@ async function handleSearchCommand(interaction) {
 	simpleSearch = options?.find((opt) => opt.name === "simple");
 	advancedSearch = options?.find((opt) => opt.name === "advanced");
 
+	console.log("🚀 ~ handleSearchCommand ~ simpleSearch:", simpleSearch);
 	if (simpleSearch) {
-		nameOption = simpleSearch.value.options?.find(
-			(opt) => opt.name === "name"
-		);
+		nameOption = simpleSearch.options?.find((opt) => opt.name === "name");
 	} else if (advancedSearch) {
-		nameOption = advancedSearch.value.options?.find(
-			(opt) => opt.name === "name"
-		);
+		nameOption = advancedSearch.options?.find((opt) => opt.name === "name");
 	}
 	console.log("🚀 ~ handleSearchCommand ~ nameOption:", nameOption);
 
