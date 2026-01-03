@@ -61,8 +61,8 @@ async function handleSearchCommand(interaction) {
 	console.log("🚀 ~ handleSearchCommand ~ options:", JSON.stringify(options));
 	let nameOption;
 
-	simpleSearch = options?.find((opt) => opt.name === "simple");
-	advancedSearch = options?.find((opt) => opt.name === "advanced");
+	const simpleSearch = options?.find((opt) => opt.name === "simple");
+	const advancedSearch = options?.find((opt) => opt.name === "advanced");
 
 	console.log("🚀 ~ handleSearchCommand ~ simpleSearch:", simpleSearch);
 	if (simpleSearch) {
