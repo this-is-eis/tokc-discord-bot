@@ -63,7 +63,7 @@ function matchColorFromTags(tags) {
 
 	console.log(`tagColorMatch: ${tagColorMatch}`);
 
-	return match ? TagColors[tagColorMatch] : DefaultColor;
+	return tagColorMatch ? TagColors[tagColorMatch] : DefaultColor;
 }
 
 function normalizeSeasonRules(seasonrules) {
