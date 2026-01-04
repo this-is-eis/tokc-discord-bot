@@ -59,9 +59,7 @@ export default {
 async function handleSearchCommand(interaction) {
 	const { options } = interaction.data;
 	console.log("🚀 ~ handleSearchCommand ~ options:", JSON.stringify(options));
-	let nameOption;
-	let strengthOption;
-	let tagOption;
+	let nameOption, strengthOption, tagOption;
 
 	const simpleSearch = options?.find((opt) => opt.name === "simple");
 	const advancedSearch = options?.find((opt) => opt.name === "advanced");
@@ -82,9 +80,6 @@ async function handleSearchCommand(interaction) {
 	console.log("🚀 ~ handleSearchCommand ~ strengthOption:", strengthOption);
 	console.log("🚀 ~ handleSearchCommand ~ tagOption:", tagOption);
 
-	// Extract the 'name' parameter from the command
-	const searchQuery = nameOption?.value?.trim();
-
 	if (!nameOption && !strengthOption && !tagOption) {
 		return jsonResponse({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -97,46 +92,20 @@ async function handleSearchCommand(interaction) {
 	try {
 		const cards = await fetchCardsWithCache();
 
-		// Case-insensitive partial match
-		const query = searchQuery.toLowerCase();
-		let matches;
-		if (nameOption) {
-			console.log("inside name option");
-			matches = cards.filter((card) =>
-				card.name.toLowerCase().includes(query)
-			);
-		}
-		console.log("🚀 ~ handleSearchCommand ~ matches after name:", matches);
-		if (strengthOption) {
-			if (matches) {
-				matches = matches.filter(
-					(card) => card.meta.strength === strengthOption.value
-				);
-			} else {
-				matches = cards.filter(
-					(card) => card.meta.strength === strengthOption.value
-				);
-			}
-		}
-		console.log(
-			"🚀 ~ handleSearchCommand ~ matches after strength:",
-			matches
-		);
-		if (tagOption) {
-			let tags = [];
-			tagOption.forEach((opt) => tags.push(opt.value));
+		const name = nameOption?.value.toLowerCase().trim();
+		const strength = strengthOption?.value;
+		const tags = tagOption?.map((opt) => opt.value.trim());
 
-			if (matches) {
-				matches = matches.filter((card) =>
-					tags.every((v) => card.tags.includes(v))
-				);
-			} else {
-				matches = cards.filter((card) =>
-					tags.every((v) => card.tags.includes(v))
-				);
-			}
-		}
-		console.log("🚀 ~ handleSearchCommand ~ matches after tag:", matches);
+		const searchQuery = queryBuilder(name, strength, tags);
+		console.log("🚀 ~ handleSearchCommand ~ searchQuery:", searchQuery);
+
+		const matches = cards.filter((card) => {
+			if (name && !card.name.toLowerCase().includes(name)) return false;
+			if (strength && card.meta.strength !== strength) return false;
+			if (tags && !tags.every((tag) => card.tags.includes(tag)))
+				return false;
+			return true;
+		});
 
 		let responseData;
 
@@ -166,7 +135,6 @@ async function handleSearchCommand(interaction) {
 				],
 			};
 		}
-		console.log(`responseData: ${JSON.stringify(responseData)}`);
 
 		return jsonResponse({
 			type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -221,6 +189,16 @@ async function fetchCardsWithCache() {
 	}
 
 	return response.json();
+}
+
+// returns something like:
+// q=name:"a" tag:"Faction Card" strength:=0
+function queryBuilder(name, strength, tags) {
+	let searchQuery = "";
+	if (name) searchQuery += `name:"${name} "`;
+	if (strength) searchQuery += `strength:=${strength} `;
+	if (tags) searchQuery += `tag:"${tags.join(",")}" `;
+	return searchQuery.trim();
 }
 
 function jsonResponse(data, status = 200) {
