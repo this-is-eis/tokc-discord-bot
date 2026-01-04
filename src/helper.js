@@ -53,5 +53,5 @@ export function formatMetaDescription(text) {
 		return line.replace(/\s*\[[^\]]*\]/g, "").trim() + " " + count;
 	});
 
-	return text;
+	return text.trim();
 }

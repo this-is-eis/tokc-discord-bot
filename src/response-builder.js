@@ -23,20 +23,16 @@ function createSingleResultEmbed(card) {
 	const keys = Object.keys(card);
 	for (const k of keys) {
 		// Force all string to be separated by '\n\n'
-		cardText = cardText.trim();
 		cardText += "\n\n";
 
 		if (/^text(\d+)?$/i.test(k)) {
-			cardText += card[k];
+			cardText += formatMetaDescription(card[k]);
 		} else if (k === "seasonrules") {
-			cardText += normalizeSeasonRules(card[k]);
+			cardText += formatMetaDescription(normalizeSeasonRules(card[k]));
 		} else if (k === "flavour") {
 			cardText += `*${card[k]}*`;
 		}
 	}
-
-	cardText = cardText.trim();
-	cardText = formatMetaDescription(cardText);
 
 	return {
 		title: card.name,
