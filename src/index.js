@@ -57,17 +57,16 @@ export default {
 };
 
 async function handleSearchCommand(interaction) {
-	const { options } = interaction.data;
+	const { name: interactionName, options } = interaction.data;
 	console.log("🚀 ~ handleSearchCommand ~ options:", JSON.stringify(options));
 	let nameOption, strengthOption, tagOption;
 
-	const simpleSearch = options?.find((opt) => opt.name === "simple");
-	const advancedSearch = options?.find((opt) => opt.name === "advanced");
+	// Handle /card interaction
+	if (interactionName === "card") {
+		nameOption = options?.find((opt) => opt.name === "name");
 
-	console.log("🚀 ~ handleSearchCommand ~ simpleSearch:", simpleSearch);
-	if (simpleSearch) {
-		nameOption = simpleSearch.options?.find((opt) => opt.name === "name");
-	} else if (advancedSearch) {
+		// Handle /advanced interaction
+	} else if (interactionName === "advanced") {
 		nameOption = advancedSearch.options?.find((opt) => opt.name === "name");
 		strengthOption = advancedSearch.options?.find(
 			(opt) => opt.name === "strength"
@@ -76,9 +75,6 @@ async function handleSearchCommand(interaction) {
 			(opt) => opt.name !== "name" && opt.name !== "strength"
 		);
 	}
-	console.log("🚀 ~ handleSearchCommand ~ nameOption:", nameOption);
-	console.log("🚀 ~ handleSearchCommand ~ strengthOption:", strengthOption);
-	console.log("🚀 ~ handleSearchCommand ~ tagOption:", tagOption);
 
 	if (!nameOption && !strengthOption && !tagOption) {
 		return jsonResponse({
