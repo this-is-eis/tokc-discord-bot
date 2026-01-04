@@ -89,15 +89,15 @@ async function handleSearchCommand(interaction) {
 		});
 	}
 
+	const name = nameOption?.value.toLowerCase().trim();
+	const strength = strengthOption?.value;
+	const tags = tagOption?.map((opt) => opt.value.trim());
+
+	const searchQuery = queryBuilder(name, strength, tags);
+	console.log("🚀 ~ handleSearchCommand ~ searchQuery:", searchQuery);
+
 	try {
 		const cards = await fetchCardsWithCache();
-
-		const name = nameOption?.value.toLowerCase().trim();
-		const strength = strengthOption?.value;
-		const tags = tagOption?.map((opt) => opt.value.trim());
-
-		const searchQuery = queryBuilder(name, strength, tags);
-		console.log("🚀 ~ handleSearchCommand ~ searchQuery:", searchQuery);
 
 		const matches = cards.filter((card) => {
 			if (name && !card.name.toLowerCase().includes(name)) return false;
@@ -195,7 +195,7 @@ async function fetchCardsWithCache() {
 // q=name:"a" tag:"Faction Card" strength:=0
 function queryBuilder(name, strength, tags) {
 	let searchQuery = "";
-	if (name) searchQuery += `name:"${name} "`;
+	if (name) searchQuery += `name:"${name}" `;
 	if (strength) searchQuery += `strength:=${strength} `;
 	if (tags) searchQuery += `tag:"${tags.join(",")}" `;
 	return searchQuery.trim();
