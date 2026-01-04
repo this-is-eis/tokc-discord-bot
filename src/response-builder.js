@@ -23,13 +23,13 @@ function createSingleResultEmbed(card) {
 	const keys = Object.keys(card);
 	for (const k of keys) {
 		// Force all string to be separated by '\n\n'
-		cardText = cardText.trimEnd();
+		cardText = cardText.trim();
 		cardText += "\n\n";
 
 		if (/^text(\d+)?$/i.test(k)) {
-			cardText += `${card[k]}`;
+			cardText += card[k];
 		} else if (k === "seasonrules") {
-			cardText += `${normalizeSeasonRules(card[k])}`;
+			cardText += normalizeSeasonRules(card[k]);
 		} else if (k === "flavour") {
 			cardText += `*${card[k]}*`;
 		}
@@ -77,7 +77,7 @@ function normalizeSeasonRules(seasonrules) {
 		const [season, rawLines] = it.season.split(",").map((s) => s.trim());
 		const label = `[${season.toUpperCase()}]`;
 		const rules = it.rules.trim();
-		text += `\n${label}: ${rules}`;
+		text += `${label}: ${rules}\n`;
 	}
 	return text;
 }
