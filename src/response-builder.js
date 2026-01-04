@@ -22,12 +22,16 @@ function createSingleResultEmbed(card) {
 
 	const keys = Object.keys(card);
 	for (const k of keys) {
+		// Force all string to be separated by '\n\n'
+		cardText = cardText.trimEnd();
+		cardText += "\n\n";
+
 		if (/^text(\d+)?$/i.test(k)) {
-			cardText += `\n\n${card[k]}`;
+			cardText += `${card[k]}`;
 		} else if (k === "seasonrules") {
-			cardText += normalizeSeasonRules(card[k]);
+			cardText += `${normalizeSeasonRules(card[k])}`;
 		} else if (k === "flavour") {
-			cardText += `\n\n*${card[k]}*`;
+			cardText += `*${card[k]}*`;
 		}
 	}
 
@@ -65,7 +69,7 @@ function matchColorFromTags(tags) {
 }
 
 function normalizeSeasonRules(seasonrules) {
-	let text = "\n";
+	let text = "";
 	const items = Array.isArray(seasonrules) ? seasonrules : [seasonrules];
 
 	for (const it of items) {
