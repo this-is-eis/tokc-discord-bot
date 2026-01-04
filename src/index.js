@@ -67,11 +67,9 @@ async function handleSearchCommand(interaction) {
 
 		// Handle /advanced interaction
 	} else if (interactionName === "advanced") {
-		nameOption = advancedSearch.options?.find((opt) => opt.name === "name");
-		strengthOption = advancedSearch.options?.find(
-			(opt) => opt.name === "strength"
-		);
-		tagOption = advancedSearch.options?.filter(
+		nameOption = options?.find((opt) => opt.name === "name");
+		strengthOption = options?.find((opt) => opt.name === "strength");
+		tagOption = options?.filter(
 			(opt) => opt.name !== "name" && opt.name !== "strength"
 		);
 	}
